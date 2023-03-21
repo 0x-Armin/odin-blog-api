@@ -20,7 +20,7 @@ exports.user_signup = function (req, res, next) {
       res.status(200).send("User saved to database.");
     })
     .catch((err) => {
-      console.error("Error saving user:", error);
+      console.error("Error saving user:", err);
       res.status(500).send("Error saving user.");
     });
 };
