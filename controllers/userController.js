@@ -1,3 +1,6 @@
+const passport = require("../passport");
+const jwt = require('jsonwebtoken');
+
 const User = require("../models/user");
 
 exports.user_signup = function (req, res, next) {
@@ -24,3 +27,22 @@ exports.user_signup = function (req, res, next) {
       res.status(500).send("Error saving user.");
     });
 };
+
+exports.user_login = [
+  (req, res, next) => {
+    passport.authenticate("local", { session: false }, (err, user, info) => {
+      if (err) {
+        return next(err);
+      }
+      if (!user) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+      req.user = user;
+      next();
+    })(req, res, next);
+  },
+  (req, res) => {
+    const token = jwt.sign({ userId: req.user.id }, "secret_key");
+    res.json({ token });
+  },
+];
