@@ -4,9 +4,22 @@ const Comment = require("../models/comment");
 const async = require("async");
 const { body, validationResult } = require("express-validator");
 
-// Display list of all Posts
+// Display list of all published Posts
 exports.post_list = function (req, res, next) {
   Post.find({ isPublished: true })
+    .sort({ date: -1 })
+    .then((list_post) => {
+      res.json(list_post);
+    })
+    .catch((err) => {
+      return next(err);
+    });
+};
+
+// Display list of all Posts (published/unpublished)
+exports.post_list_admin = function (req, res, next) {
+  Post.find()
+    .select('title date isPublished')
     .sort({ date: -1 })
     .then((list_post) => {
       res.json(list_post);
@@ -54,3 +67,23 @@ exports.post_detail = (req, res, next) => {
     }
   );
 };
+
+// Toggle isPublished status of given post and return updated list of posts
+exports.toggle_publish_post = (req, res, next) => {
+  Post.findById(req.params.id)
+    .then((post) => {
+      post.isPublished = !post.isPublished;
+      return post.save();
+    })
+    .then(() => {
+      return Post.find()
+              .select('title date isPublished')
+              .sort({ date: -1 })
+    })
+    .then((posts) => {
+      res.json(posts)
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
