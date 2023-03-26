@@ -20,14 +20,14 @@ router.put(
   post_controller.toggle_publish_post
 );
 
+router.post(
+  "/new",
+  token_authenticator.authenticateToken,
+  post_controller.new_post_post
+);
+
 // GET specific post
 router.get("/:id", post_controller.post_detail);
-
-
-
-router.post("/:id", (req, res) => {
-  return res.send("POST/CREATE HTTP method on new post");
-});
 
 router.put("/:id", (req, res) => {
   return res.send(`PUT/UPDATE HTTP method on existing post: ${req.params.id}`);

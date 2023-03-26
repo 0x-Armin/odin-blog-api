@@ -2,7 +2,6 @@ const Post = require("../models/post");
 const Comment = require("../models/comment");
 
 const async = require("async");
-const { body, validationResult } = require("express-validator");
 
 // Display list of all published Posts
 exports.post_list = function (req, res, next) {
@@ -75,6 +74,30 @@ exports.toggle_publish_post = (req, res, next) => {
       post.isPublished = !post.isPublished;
       return post.save();
     })
+    .then(() => {
+      return Post.find()
+              .select('title date isPublished')
+              .sort({ date: -1 })
+    })
+    .then((posts) => {
+      res.json(posts)
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
+exports.new_post_post = (req, res, next) => {
+  const post = new Post(
+    {
+      title: req.body.title,
+      content: req.body.content,
+      date: Date.now(),
+      isPublished: false,
+    }
+  );
+
+  post.save()
     .then(() => {
       return Post.find()
               .select('title date isPublished')
