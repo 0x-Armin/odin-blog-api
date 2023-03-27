@@ -10,6 +10,10 @@ const CommentSchema = new Schema({
   post: { type: Schema.Types.ObjectId, ref: "Post" },
 });
 
+CommentSchema.virtual("url_del").get(function () {
+  return `/comments/${this._id}/delete`;
+});
+
 CommentSchema.virtual("date_formatted").get(function() {
   return DateTime.fromJSDate(this.date).toLocaleString(DateTime.DATE_MED);
 })
