@@ -13,4 +13,4 @@ exports.authenticateToken = function (req, res, next) {
     req.user = user;
     next();
   });
-}
+};
